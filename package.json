@@ -8,7 +8,6 @@
     "url": "https://github.com/akmjenkins/simple-event-emitter.git"
   },
   "scripts": {
-    "postinstall": "npm run compile",
     "test": "npm run compile && mocha --compilers js:babel-core/register",
     "compile": "babel -d lib/ src/",
     "example-es6": "babel-node examples/house.es6.js",

@@ -1,23 +1,23 @@
+const privateState = new WeakMap();
+
+let getEvents = function() {
+	return privateState.get(this).events;
+}
+
+let clearEvents = function() {
+	privateState.set(this,{events:{}});
+}
+
 export default class EventEmitter {
 
 	constructor()
 	{
-
-	}
-
-	_eventEmitterEvents()
-	{
-		return this.eventEmitterEvents || (this.eventEmitterEvents = {});
-	}
-
-	_clearEventEmitterEvents()
-	{
-		this.eventEmitterEvents = {};
+		clearEvents.call(this);
 	}
 
 	on(event,callback)
 	{
-		var events;
+		let events = getEvents.call(this);
 
 		if(!event) {
 			throw new Error('No event(s) specified');
@@ -31,7 +31,6 @@ export default class EventEmitter {
 			throw new Error('Supplied callback is not a function');
 		}
 
-		events = this._eventEmitterEvents();
 		(Array.isArray(event) ? event : [event]).forEach((event) => {
 			if(!events[event]) {
 				events[event] = [];
@@ -44,7 +43,7 @@ export default class EventEmitter {
 
 	one(event,callback)
 	{
-		var events;
+		let events = getEvents.call(this);
 		if(!callback) {
 			throw new Error('No callback is specified');
 		}
@@ -53,7 +52,6 @@ export default class EventEmitter {
 			throw new Error('Supplied callback is not a function');
 		}
 
-		events = this._eventEmitterEvents();
 		(Array.isArray(event) ? event : [event]).forEach((event) => {
 			let cb = function() {
 				this.off(event,cb);
@@ -66,12 +64,10 @@ export default class EventEmitter {
 
 	emit(event,args)
 	{
-		var events;
+		let events = getEvents.call(this);
 		if(!event) {
 			throw new Error('No event(s) specified');
 		}
-
-		events = this._eventEmitterEvents();
 
 		//is empty object
 		if(Object.keys(events).length === 0 && events.constructor === Object) {
@@ -79,7 +75,7 @@ export default class EventEmitter {
 		}
 
 		(Array.isArray(event) ? event : [event]).forEach((event) => {
-			var ns,ns_event_type;
+			let ns,ns_event_type;
 
 			//check if this event is namespaced
 			for(let event_type in events) {
@@ -102,14 +98,11 @@ export default class EventEmitter {
 
 	off(event,callback)
 	{
-		var events;
+		let events = getEvents.call(this);
 		if(!event) {
-			this._clearEventEmitterEvents();
+			clearEvents.call(this);
 			return this;
 		}
-
-
-		events = this._eventEmitterEvents();
 
 		(Array.isArray(event) ? event : [event]).forEach((event) => {
 

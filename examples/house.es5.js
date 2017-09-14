@@ -1,6 +1,8 @@
 var EventEmitter = require('../src/simple-event-emitter').default;
 
-var House = function() { };
+var House = function() { 
+	EventEmitter.call(this);
+};
 
 House.Event = {
 	DOORBELL: 1,

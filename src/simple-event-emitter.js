@@ -75,7 +75,7 @@ export default class EventEmitter {
 		}
 
 		(Array.isArray(event) ? event : [event]).forEach((event) => {
-			let ns,ns_event_type;
+			let ns,ns_event_type,cb;
 
 			//check if this event is namespaced
 			for(let event_type in events) {
@@ -86,7 +86,7 @@ export default class EventEmitter {
 
 				if(ns_event_type == event) {
 					for( let i in events[event_type] ) {
-						events[event_type][i].apply(this,args || []);
+						(cb = events[event_type][i]) && cb.apply(this,args || []);
 					}
 				}
 
